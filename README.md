@@ -62,9 +62,21 @@ Rather than masking the weak correlation with unrequested data, I chose to prese
 
 If you open the `analysis.ipynb` notebook, you will see a detailed breakdown of the linear regression. The most important takeaway is that **the $R^2$ score is extremely low (around 0.09)**.
 
-This is not a bug in the code; it is a fundamental reality of the data. Here are the conclusions we drew from the model:
+![City Population vs. Museum Attendance](assets/population_vs_attendance.png)
+
+This highlights an interesting insight from the dataset:
 
 1. **Local Population is a Poor Predictor:** The model attempts to predict museum attendance based on local residents. However, places like the Louvre (Paris) or the Vatican Museums (Vatican City) are overwhelmingly driven by **global tourism**, not locals. Vatican City has fewer than 1,000 residents but 7 million annual visitors!
 2. **Administrative Boundaries Skew Data:** We pull the "City Proper" population from Wikidata. Paris shows a population of ~2.1 million (the strict city limits) rather than its metropolitan population of ~12 million. Comparing city-proper to city-proper is often an "apples to oranges" comparison globally.
 
-Ultimately, the pipeline successfully built the requested harmonized database, but the analytical conclusion is that predicting museum attendance requires features beyond just local population size.
+At the end of the day, while the pipeline successfully merged the two APIs into a harmonized database, predicting museum attendance clearly requires features well beyond just local population size (e.g. international airport arrivals, hotel capacity, etc.).
+
+### Top Performers and Residuals
+
+By calculating the model's residuals, we can clearly see which museums drastically over-perform their local population (like the Louvre and Vatican Museums), and which under-perform expectations based purely on population size.
+
+![Museum Over- and Under-Performers](assets/residuals.png)
+
+### Global Distribution
+
+![Total Museums and Visitors per Country](assets/totals_per_country.png)
