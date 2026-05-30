@@ -7,7 +7,7 @@ run:
 	python -m museums.pipeline
 
 test:
-	pytest -v
+	pytest -v --cov=museums --cov-report=term-missing
 
 lint:
 	ruff check .
