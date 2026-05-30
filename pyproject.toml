@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ivado-museums"
 version = "0.1.0"
 description = "Museum visitor and city population database with linear regression analysis"
-requires-python = ">=3.13"  # 3.14 is the installed runtime; >=3.13 ensures all wheels resolve
+requires-python = ">=3.13"
 dependencies = [
     "httpx>=0.27",
     "mwparserfromhell>=0.6",
