@@ -4,6 +4,8 @@ Hint: pytest automatically discovers conftest.py, making these fixtures globally
 available without importing them. Keeps tests DRY.
 """
 
+from collections.abc import Generator
+
 import pandas as pd
 import pytest
 from sqlalchemy import create_engine
@@ -11,15 +13,15 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from museums.models.schema import Base
 
-
 # ---------------------------------------------------------------------------
 # Database Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
-def in_memory_session() -> Session:
+def in_memory_session() -> Generator[Session]:
     """SQLite in-memory session for fast, isolated pipeline tests.
-    
+
     Prevents unit tests from polluting the real Postgres DB.
     """
     engine = create_engine("sqlite:///:memory:")
@@ -34,10 +36,11 @@ def in_memory_session() -> Session:
 # Machine Learning Data Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def sample_df() -> pd.DataFrame:
     """Small, synthetic dataset with a clear linear trend.
-    
+
     Tests regression math without needing real Wikipedia data.
     """
     return pd.DataFrame(
@@ -65,6 +68,13 @@ def noisy_df() -> pd.DataFrame:
             "country": ["XX", "YY", "ZZ", "WW", "VV", "UU"],
             "annual_visitors": [9_000_000, 2_100_000, 6_500_000, 2_200_000, 8_000_000, 2_500_000],
             "visitor_year": [2024, 2024, 2024, 2024, 2024, 2024],
-            "city_population": [2_000_000, 21_000_000, 3_000_000, 19_000_000, 1_500_000, 18_000_000],
+            "city_population": [
+                2_000_000,
+                21_000_000,
+                3_000_000,
+                19_000_000,
+                1_500_000,
+                18_000_000,
+            ],
         }
     )

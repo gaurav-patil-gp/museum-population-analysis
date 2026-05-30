@@ -1,7 +1,5 @@
 """Tests for the Wikipedia ingestion module."""
 
-import json
-
 import pytest
 
 from museums.ingestion.wikipedia import (
@@ -60,6 +58,7 @@ SAMPLE_API_RESPONSE = {
 # parse_visitors tests
 # ---------------------------------------------------------------------------
 
+
 class TestParseVisitors:
     def test_comma_integer_with_year(self) -> None:
         """Verify the parser correctly extracts standard comma-separated integers and ignores parenthetical years."""
@@ -103,6 +102,7 @@ class TestParseVisitors:
 # ---------------------------------------------------------------------------
 # parse_table tests
 # ---------------------------------------------------------------------------
+
 
 class TestParseTable:
     def test_returns_museum_records(self) -> None:
@@ -158,17 +158,16 @@ class TestParseTable:
 # fetch_museums integration test (mocked HTTP)
 # ---------------------------------------------------------------------------
 
+
 class TestFetchMuseums:
-    def test_calls_mediawiki_api(self, respx_mock: pytest.FixtureRequest) -> None:  # type: ignore[type-arg]
+    def test_calls_mediawiki_api(self, respx_mock: pytest.FixtureRequest) -> None:
         """Verify fetch_museums hits the API and returns parsed records."""
         import respx
         from httpx import Response
 
         api_url = "https://en.wikipedia.org/w/api.php"
         with respx.mock:
-            respx.get(api_url).mock(
-                return_value=Response(200, json=SAMPLE_API_RESPONSE)
-            )
+            respx.get(api_url).mock(return_value=Response(200, json=SAMPLE_API_RESPONSE))
             records = fetch_museums(api_url=api_url)
 
         assert len(records) > 0

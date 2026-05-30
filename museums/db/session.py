@@ -42,7 +42,7 @@ def make_session_factory(database_url: str | None = None) -> sessionmaker[Sessio
 
 
 @contextmanager
-def get_session(database_url: str | None = None) -> Generator[Session, None, None]:
+def get_session(database_url: str | None = None) -> Generator[Session]:
     """Context manager that yields a database session and handles commit/rollback.
 
     Args:

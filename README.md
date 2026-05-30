@@ -50,9 +50,9 @@ I introduced a static `config/city_overrides.yaml` file. The pipeline checks thi
 
 ## Why I Stuck to the Assignment Data
 
-The assignment explicitly asked to "correlate the tourist attendance at their museums with the population of the respective cities." 
+The assignment explicitly asked to "correlate the tourist attendance at their museums with the population of the respective cities."
 
-While looking at the initial low correlation, I was tempted to pull in external datasets (such as international airport arrivals, hotel density, or general tourism metrics) to build a better predictive model. However, in an engineering context, **scope discipline is critical**. I purposefully constrained the pipeline to *only* use the data requested by the prompt (City Population vs. Museum Visitors). 
+While looking at the initial low correlation, I was tempted to pull in external datasets (such as international airport arrivals, hotel density, or general tourism metrics) to build a better predictive model. However, in an engineering context, **scope discipline is critical**. I purposefully constrained the pipeline to *only* use the data requested by the prompt (City Population vs. Museum Visitors).
 
 Rather than masking the weak correlation with unrequested data, I chose to present the findings honestly and treat the limitations of the dataset as an analytical conclusion (see below).
 
@@ -60,7 +60,7 @@ Rather than masking the weak correlation with unrequested data, I chose to prese
 
 ## Final Results & Conclusions
 
-If you open the `analysis.ipynb` notebook, you will see a detailed breakdown of the linear regression. The most important takeaway is that **the $R^2$ score is extremely low (around 0.09)**. 
+If you open the `analysis.ipynb` notebook, you will see a detailed breakdown of the linear regression. The most important takeaway is that **the $R^2$ score is extremely low (around 0.09)**.
 
 This is not a bug in the code; it is a fundamental reality of the data. Here are the conclusions we drew from the model:
 

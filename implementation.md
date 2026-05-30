@@ -111,8 +111,8 @@ the World Bank. The reasons:
 
 Population lookup is a two-step process:
 
-**Step 1 - Resolve city name to QID**. 
-First, the pipeline checks `config/city_overrides.yaml`. If a city (like Vatican City or Singapore) is listed there, it bypasses the API to prevent fragile dynamic matching. 
+**Step 1 - Resolve city name to QID**.
+First, the pipeline checks `config/city_overrides.yaml`. If a city (like Vatican City or Singapore) is listed there, it bypasses the API to prevent fragile dynamic matching.
 For all other cities, it queries the `wbsearchentities` REST endpoint:
 ```
 GET https://www.wikidata.org/w/api.php

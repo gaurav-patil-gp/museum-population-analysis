@@ -25,3 +25,5 @@ repos:
           - sqlalchemy[mypy]>=2.0
           - psycopg[binary]>=3.2
           - pandas-stubs>=2.2
+          - pytest>=8.0
+          - types-PyYAML>=6.0

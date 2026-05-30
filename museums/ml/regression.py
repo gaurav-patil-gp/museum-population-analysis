@@ -3,7 +3,6 @@
 import logging
 from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
@@ -93,7 +92,7 @@ def run_regression(df: pd.DataFrame) -> RegressionResult:
     y_pred = model.predict(X)
     r2 = float(r2_score(y, y_pred))
     slope = float(model.coef_[0])
-    intercept = float(model.intercept_)  # type: ignore[arg-type]
+    intercept = float(model.intercept_)
 
     logger.info(
         "Regression: slope=%.4f, intercept=%.0f, R²=%.4f, n=%d",

@@ -19,7 +19,7 @@ WIKIDATA_SPARQL_URL = "https://query.wikidata.org/sparql"
 # Load static mapping from YAML configuration file
 CONFIG_PATH = Path(__file__).parent.parent.parent / "config" / "city_overrides.yaml"
 try:
-    with open(CONFIG_PATH, "r") as f:
+    with open(CONFIG_PATH) as f:
         MANUAL_CITY_QIDS = yaml.safe_load(f) or {}
 except FileNotFoundError:
     logger.warning("Config file %s not found. Proceeding without static overrides.", CONFIG_PATH)
@@ -57,7 +57,7 @@ def resolve_city_qid(
         Wikidata QID string (e.g., "Q90") or None if no match found.
     """
     if city_name in MANUAL_CITY_QIDS:
-        qid = MANUAL_CITY_QIDS[city_name]
+        qid = str(MANUAL_CITY_QIDS[city_name])
         logger.debug("Resolved %r (%s) -> %s (static mapping)", city_name, country, qid)
         return qid
 
@@ -91,12 +91,12 @@ def resolve_city_qid(
     for result in results:
         desc = result.get("description", "").lower()
         if country.lower() in desc:
-            qid: str = result["id"]
+            qid = str(result["id"])
             logger.debug("Resolved %r (%s) -> %s (matched description)", city_name, country, qid)
             return qid
 
     # Fallback to the first result if no description matches
-    qid: str = results[0]["id"]
+    qid = str(results[0]["id"])
     logger.debug("Resolved %r (%s) -> %s (fallback to first result)", city_name, country, qid)
     return qid
 
@@ -192,9 +192,7 @@ def fetch_city_populations(
                 qid_map[(city_name, country)] = qid
 
     resolved_qids = list(set(qid_map.values()))
-    logger.info(
-        "Resolved %d / %d cities to Wikidata QIDs", len(resolved_qids), len(unique_cities)
-    )
+    logger.info("Resolved %d / %d cities to Wikidata QIDs", len(resolved_qids), len(unique_cities))
 
     populations = fetch_populations(resolved_qids, sparql_url=sparql_url)
 

@@ -75,7 +75,7 @@ def _extract_wikilink_target(text: str) -> str:
         display = str(link.text) if link.text else str(link.title)
         return display.strip()
     # Fallback: strip all markup and return plain text.
-    return wikicode.strip_code().strip()
+    return str(wikicode.strip_code()).strip()
 
 
 def _extract_flag_country(text: str) -> str:
@@ -87,7 +87,7 @@ def _extract_flag_country(text: str) -> str:
     for template in wikicode.filter_templates():
         if str(template.name).strip().lower() == "flag":
             return str(template.params[0].value).strip()
-    return wikicode.strip_code().strip()
+    return str(wikicode.strip_code()).strip()
 
 
 def parse_visitors(raw: str) -> tuple[int, int | None]:

@@ -1,15 +1,13 @@
 """Tests for the ETL pipeline."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
 from sqlalchemy.orm import Session
 
 from museums.ingestion.population import CityPopulation
 from museums.ingestion.wikipedia import MuseumRecord
-from museums.models.schema import Base, City, Museum
+from museums.models.schema import City, Museum
 from museums.pipeline.etl import enrich_populations, load_museums
-
 
 SAMPLE_RECORDS = [
     MuseumRecord(
@@ -43,6 +41,7 @@ SAMPLE_RECORDS = [
 # load_museums tests
 # ---------------------------------------------------------------------------
 
+
 class TestLoadMuseums:
     def test_inserts_museums_and_cities(self, in_memory_session: Session) -> None:
         """Verify that valid museum records correctly map to inserts in both Museum and City tables."""
@@ -61,10 +60,7 @@ class TestLoadMuseums:
         in_memory_session.flush()
 
         paris_museums = (
-            in_memory_session.query(Museum)
-            .join(City)
-            .filter(City.name == "Paris")
-            .all()
+            in_memory_session.query(Museum).join(City).filter(City.name == "Paris").all()
         )
         paris_cities = in_memory_session.query(City).filter_by(name="Paris").all()
 
@@ -87,6 +83,7 @@ class TestLoadMuseums:
 # enrich_populations tests
 # ---------------------------------------------------------------------------
 
+
 class TestEnrichPopulations:
     def test_enriches_matching_cities(self, in_memory_session: Session) -> None:
         """Check that API population data is successfully written to the correct City rows."""
@@ -95,8 +92,12 @@ class TestEnrichPopulations:
         cities = in_memory_session.query(City).all()
 
         mock_populations = [
-            CityPopulation(name="Paris", country="France", wikidata_qid="Q90", population=2_161_000),
-            CityPopulation(name="London", country="United Kingdom", wikidata_qid="Q84", population=8_982_000),
+            CityPopulation(
+                name="Paris", country="France", wikidata_qid="Q90", population=2_161_000
+            ),
+            CityPopulation(
+                name="London", country="United Kingdom", wikidata_qid="Q84", population=8_982_000
+            ),
         ]
 
         with patch("museums.pipeline.etl.fetch_city_populations", return_value=mock_populations):
@@ -114,7 +115,9 @@ class TestEnrichPopulations:
 
         mock_populations = [
             CityPopulation(name="Paris", country="France", wikidata_qid="Q90", population=None),
-            CityPopulation(name="London", country="United Kingdom", wikidata_qid="unknown", population=None),
+            CityPopulation(
+                name="London", country="United Kingdom", wikidata_qid="unknown", population=None
+            ),
         ]
 
         with patch("museums.pipeline.etl.fetch_city_populations", return_value=mock_populations):

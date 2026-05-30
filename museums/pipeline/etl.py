@@ -90,9 +90,7 @@ def enrich_populations(cities: list[City], session: Session) -> None:
             city.wikidata_qid = cp.wikidata_qid
             enriched += 1
 
-    logger.info(
-        "Enriched %d / %d cities with population data", enriched, len(cities)
-    )
+    logger.info("Enriched %d / %d cities with population data", enriched, len(cities))
 
 
 def run(database_url: str | None = None) -> None:
@@ -118,7 +116,7 @@ def run(database_url: str | None = None) -> None:
         # TRUNCATE tables to ensure the ETL pipeline is idempotent and doesn't duplicate data
         session.execute(text("TRUNCATE TABLE museum, city RESTART IDENTITY CASCADE"))
         session.commit()
-        
+
         cities = load_museums(museum_records, session)
         enrich_populations(cities, session)
         session.commit()

@@ -1,11 +1,11 @@
 """Tests for the Wikidata population ingestion module."""
 
-from unittest.mock import MagicMock, patch
+import typing
+from unittest.mock import patch
 
 import pytest
 
 from museums.ingestion.population import (
-    CityPopulation,
     fetch_city_populations,
     fetch_populations,
     resolve_city_qid,
@@ -22,34 +22,30 @@ SEARCH_RESPONSE_PARIS = {
     ]
 }
 
-SEARCH_RESPONSE_EMPTY = {"search": []}
+SEARCH_RESPONSE_EMPTY: dict[str, typing.Any] = {"search": []}
 
 
 class TestResolveCityQid:
-    def test_returns_first_match(self, respx_mock: pytest.FixtureRequest) -> None:  # type: ignore[type-arg]
+    def test_returns_first_match(self, respx_mock: pytest.FixtureRequest) -> None:
         """Verify the logic correctly handles Wikidata search results and extracts the QID from the primary match."""
         import respx
         from httpx import Response
 
         api_url = "https://www.wikidata.org/w/api.php"
         with respx.mock:
-            respx.get(api_url).mock(
-                return_value=Response(200, json=SEARCH_RESPONSE_PARIS)
-            )
+            respx.get(api_url).mock(return_value=Response(200, json=SEARCH_RESPONSE_PARIS))
             qid = resolve_city_qid("Paris", "France", api_url=api_url)
 
         assert qid == "Q90"
 
-    def test_returns_none_when_no_results(self, respx_mock: pytest.FixtureRequest) -> None:  # type: ignore[type-arg]
+    def test_returns_none_when_no_results(self, respx_mock: pytest.FixtureRequest) -> None:
         """Ensure the pipeline doesn't crash when searching for a completely non-existent city, gracefully returning None instead."""
         import respx
         from httpx import Response
 
         api_url = "https://www.wikidata.org/w/api.php"
         with respx.mock:
-            respx.get(api_url).mock(
-                return_value=Response(200, json=SEARCH_RESPONSE_EMPTY)
-            )
+            respx.get(api_url).mock(return_value=Response(200, json=SEARCH_RESPONSE_EMPTY))
             qid = resolve_city_qid("Nonexistent City", "Mars", api_url=api_url)
 
         assert qid is None
@@ -76,16 +72,14 @@ SPARQL_RESPONSE = {
 
 
 class TestFetchPopulations:
-    def test_returns_population_map(self, respx_mock: pytest.FixtureRequest) -> None:  # type: ignore[type-arg]
+    def test_returns_population_map(self, respx_mock: pytest.FixtureRequest) -> None:
         """Check that the SPARQL response is correctly parsed into a dictionary mapping QIDs to integer populations."""
         import respx
         from httpx import Response
 
         sparql_url = "https://query.wikidata.org/sparql"
         with respx.mock:
-            respx.get(sparql_url).mock(
-                return_value=Response(200, json=SPARQL_RESPONSE)
-            )
+            respx.get(sparql_url).mock(return_value=Response(200, json=SPARQL_RESPONSE))
             result = fetch_populations(["Q90", "Q956"], sparql_url=sparql_url)
 
         assert result["Q90"] == 2_161_000
@@ -96,7 +90,7 @@ class TestFetchPopulations:
         result = fetch_populations([])
         assert result == {}
 
-    def test_keeps_largest_when_multiple_values(self, respx_mock: pytest.FixtureRequest) -> None:  # type: ignore[type-arg]
+    def test_keeps_largest_when_multiple_values(self, respx_mock: pytest.FixtureRequest) -> None:
         """Catch duplicate population logic: If a city lists both a 'city proper' and 'metro' population in Wikidata, pick the largest."""
         import respx
         from httpx import Response
@@ -105,16 +99,20 @@ class TestFetchPopulations:
         duplicate_response = {
             "results": {
                 "bindings": [
-                    {"city": {"value": "http://www.wikidata.org/entity/Q90"}, "population": {"value": "2161000"}},
-                    {"city": {"value": "http://www.wikidata.org/entity/Q90"}, "population": {"value": "12000000"}},
+                    {
+                        "city": {"value": "http://www.wikidata.org/entity/Q90"},
+                        "population": {"value": "2161000"},
+                    },
+                    {
+                        "city": {"value": "http://www.wikidata.org/entity/Q90"},
+                        "population": {"value": "12000000"},
+                    },
                 ]
             }
         }
         sparql_url = "https://query.wikidata.org/sparql"
         with respx.mock:
-            respx.get(sparql_url).mock(
-                return_value=Response(200, json=duplicate_response)
-            )
+            respx.get(sparql_url).mock(return_value=Response(200, json=duplicate_response))
             result = fetch_populations(["Q90"], sparql_url=sparql_url)
 
         assert result["Q90"] == 12_000_000
@@ -123,6 +121,7 @@ class TestFetchPopulations:
 # ---------------------------------------------------------------------------
 # fetch_city_populations integration test
 # ---------------------------------------------------------------------------
+
 
 class TestFetchCityPopulations:
     def test_deduplicates_cities(self) -> None:

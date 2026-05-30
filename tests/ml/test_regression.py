@@ -5,11 +5,10 @@ import pytest
 
 from museums.ml.regression import RegressionResult, run_regression
 
-
-
 # ---------------------------------------------------------------------------
 # run_regression tests
 # ---------------------------------------------------------------------------
+
 
 class TestRunRegression:
     def test_returns_regression_result(self, sample_df: pd.DataFrame) -> None:
@@ -47,4 +46,3 @@ class TestRunRegression:
         )
         with pytest.raises(ValueError, match="at least 2"):
             run_regression(df)
-
