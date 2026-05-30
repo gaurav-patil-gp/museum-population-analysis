@@ -1,0 +1,7 @@
+# Static mapping for cities that fail heuristic resolution 
+# (e.g., city-states or mismatched descriptions)
+Vatican City: Q237
+Florence: Q2044
+Hong Kong: Q8646
+Edinburgh: Q23436
+Singapore: Q334

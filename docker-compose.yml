@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: museums
+      POSTGRES_USER: museums
+      POSTGRES_PASSWORD: museums
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U museums -d museums"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    command: python -m museums.pipeline
+    environment:
+      DATABASE_URL: postgresql+psycopg://museums:museums@db:5432/museums
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+
+  notebook:
+    build: .
+    command: >
+      jupyter lab
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --allow-root
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+    ports:
+      - "8888:8888"
+    environment:
+      DATABASE_URL: postgresql+psycopg://museums:museums@db:5432/museums
+      LOG_LEVEL: INFO
+    volumes:
+      - ./notebooks:/app/notebooks
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
